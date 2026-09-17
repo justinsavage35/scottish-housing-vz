@@ -4,7 +4,7 @@ import BubbleChart from './BubbleChart';
 export default function App() {
   const [data, setData] = useState([]);
   const [selectedYear, setSelectedYear] = useState(2023);
-  const [viewMode, setViewMode] = useState('all'); // 'all' | 'scatter' | 'change' | 'price'
+  const [viewMode, setViewMode] = useState('all'); // 'all' | 'scatter'
   const [geoLevel, setGeoLevel] = useState('zone'); // 'zone' | 'hscp'
   const [selectedHSCP, setSelectedHSCP] = useState('ALL');
   const [hoveredItem, setHoveredItem] = useState(null);
@@ -129,22 +129,6 @@ export default function App() {
             >
               Price vs Growth (2D)
             </button>
-            <button
-              onClick={() => setViewMode('change')}
-              className={`px-3.5 py-1.5 rounded-md transition ${
-                viewMode === 'change' ? 'bg-blue-600 text-white shadow' : 'text-gray-700 hover:bg-gray-100'
-              }`}
-            >
-              1-Yr Change (%)
-            </button>
-            <button
-              onClick={() => setViewMode('price')}
-              className={`px-3.5 py-1.5 rounded-md transition ${
-                viewMode === 'price' ? 'bg-blue-600 text-white shadow' : 'text-gray-700 hover:bg-gray-100'
-              }`}
-            >
-              Average Price (£)
-            </button>
           </div>
 
           {/* HSCP Dropdown Filter */}
@@ -190,7 +174,7 @@ export default function App() {
         </div>
       </div>
 
-      {/* Main Canvas & Hover Card */}
+      {/* Main Canvas Card & Hover Card */}
       <div className="relative">
         <BubbleChart
           data={activeDataset}
