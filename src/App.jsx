@@ -10,7 +10,7 @@ export default function App() {
   const [hoveredItem, setHoveredItem] = useState(null);
 
   useEffect(() => {
-    fetch('/housing_processed.json')
+    fetch('./housing_processed.json')
       .then((res) => res.json())
       .then((d) => setData(d))
       .catch((err) => console.error('Failed to load dataset:', err));
