@@ -30,8 +30,9 @@ An interactive D3.js force-directed bubble visualization built with React, Redux
 ├── public/
 │   └── housing_processed.json        # Static JSON loaded by the web app
 ├── src/
+│   ├── components/
+│   │   └── BubbleChart.jsx           # D3 force simulation component
 │   ├── App.jsx                       # Navigation, year slider, layout switcher
-│   ├── BubbleChart.jsx               # D3 force simulation component
 │   ├── main.jsx                      # App entry point with Redux Provider
 │   └── index.css                     # Tailwind CSS styles
 ├── package.json
