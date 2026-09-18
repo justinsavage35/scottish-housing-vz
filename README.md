@@ -23,17 +23,15 @@ An interactive D3.js force-directed bubble visualization built with React, Redux
 
 ```text
 ├── data/
-│   └── housing_sales_prices.csv      # Raw dataset (~800k rows)
+│   ├── housing_sales_prices.csv      # Raw dataset (~800k rows)
+|   └── intermeditate_code.csv        # Mapping intermediate areas to larger areas
 ├── scripts/
 │   └── preprocess.py                 # Aggregates raw CSV into housing_processed.json
 ├── public/
 │   └── housing_processed.json        # Static JSON loaded by the web app
 ├── src/
-│   ├── slices/
-│   │   └── vizSlice.js               # Redux state (selectedYear, viewMode, hover)
 │   ├── App.jsx                       # Navigation, year slider, layout switcher
 │   ├── BubbleChart.jsx               # D3 force simulation component
-│   ├── store.js                      # Redux store configuration
 │   ├── main.jsx                      # App entry point with Redux Provider
 │   └── index.css                     # Tailwind CSS styles
 ├── package.json
