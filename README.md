@@ -9,8 +9,7 @@ An interactive D3.js force-directed bubble visualization built with React, Redux
 - **Dynamic Physics Simulation (`d3-force`)**: Smooth animated transitions between unified cluster and split distributions.
 - **Multiple Visual Layouts**:
   - **All Sales**: Single packed cluster highlighting volume distribution.
-  - **1-Year Price Change**: Bubbles positioned along a linear growth axis from decline to expansion.
-  - **Average Price**: Bubbles separated on a logarithmic price scale.
+  - **Price vs Growth (2D)**: Scatter chart of Average property price and 1-Yr Price Growth Percentage
 - **Dimensional Visual Encoding**:
   - Bubble **area** is proportional to transaction volume (`Count`).
   - Bubble **color** represents the 1-year price change using a diverging color scale.
