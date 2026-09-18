@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import BubbleChart from './BubbleChart';
+import BubbleChart from './components/BubbleChart';
 
 export default function App() {
   const [data, setData] = useState([]);
