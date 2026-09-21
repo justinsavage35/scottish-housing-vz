@@ -225,6 +225,15 @@ export default function App() {
           </div>
         )}
       </div>
+      <div className="relative">
+        <BubbleChart
+          data={activeDataset}
+          selectedYear={selectedYear}
+          viewMode={viewMode}
+          geoLevel={geoLevel}
+          onHoverItem={setHoveredItem}
+        />
+      </div>
     </div>
   );
 }
