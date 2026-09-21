@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import BubbleChart from './components/BubbleChart';
-import { LineChartDatasetTransition } from "./components/LineChartDatasetTransition";
+import { MultiLineChart } from './components/MultiLineChart';
 
 export default function App() {
   const [data, setData] = useState([]);
   const [selectedYear, setSelectedYear] = useState(2023);
   const [viewMode, setViewMode] = useState('all'); // 'all' | 'scatter'
   const [geoLevel, setGeoLevel] = useState('zone'); // 'zone' | 'hscp'
-  const [selectedHSCP, setSelectedHSCP] = useState('ALL');
+  const [selectedHSCP, setSelectedHSCP] = useState('Aberdeen City');
+  const [selectedZones, setSelectedZones] = useState([]);
   const [hoveredItem, setHoveredItem] = useState(null);
 
   useEffect(() => {
@@ -16,6 +17,11 @@ export default function App() {
       .then((d) => setData(d))
       .catch((err) => console.error('Failed to load dataset:', err));
   }, []);
+
+  // Reset custom zone selections whenever the HSCP dropdown changes
+  useEffect(() => {
+    setSelectedZones([]);
+  }, [selectedHSCP]);
 
   const hscpList = useMemo(() => {
     if (!data || data.length === 0) return [];
@@ -77,6 +83,54 @@ export default function App() {
     return data.filter((d) => d.HSCPName === selectedHSCP);
   }, [geoLevel, aggregatedHSCPData, data, selectedHSCP]);
 
+  // Compute multi-line dataset
+  const lineChartData = useMemo(() => {
+    if (!data || data.length === 0) return { years: [], seriesMap: {}, zones: [] };
+
+    const years = Array.from(new Set(data.map((d) => d.DateCode))).sort();
+    const targetHSCP = selectedHSCP === 'ALL' ? hscpList[0] : selectedHSCP;
+    
+    const zoneNames = Array.from(
+      new Set(data.filter((d) => d.HSCPName === targetHSCP).map((d) => d.GeographyName))
+    ).sort();
+
+    const seriesMap = {};
+    seriesMap['Scotland Average'] = [];
+    seriesMap[`${targetHSCP} Average`] = [];
+    zoneNames.forEach((z) => {
+      seriesMap[z] = [];
+    });
+
+    years.forEach((year) => {
+      const yearRows = data.filter((d) => d.DateCode === year);
+
+      const scotTotalVal = yearRows.reduce((acc, d) => acc + (d.Mean || 0) * (d.Count || 0), 0);
+      const scotCount = yearRows.reduce((acc, d) => acc + (d.Count || 0), 0);
+      seriesMap['Scotland Average'].push({ x: year, y: scotCount > 0 ? scotTotalVal / scotCount : 0 });
+
+      const hscpRows = yearRows.filter((d) => d.HSCPName === targetHSCP);
+      const hscpTotalVal = hscpRows.reduce((acc, d) => acc + (d.Mean || 0) * (d.Count || 0), 0);
+      const hscpCount = hscpRows.reduce((acc, d) => acc + (d.Count || 0), 0);
+      seriesMap[`${targetHSCP} Average`].push({ x: year, y: hscpCount > 0 ? hscpTotalVal / hscpCount : 0 });
+
+      zoneNames.forEach((zoneName) => {
+        const zoneRow = hscpRows.find((d) => d.GeographyName === zoneName);
+        seriesMap[zoneName].push({
+          x: year,
+          y: zoneRow && zoneRow.Mean > 0 ? zoneRow.Mean : null,
+        });
+      });
+    });
+
+    return { years, seriesMap, zones: zoneNames, regionName: targetHSCP };
+  }, [data, selectedHSCP, hscpList]);
+
+  const handleToggleZone = (zoneName) => {
+    setSelectedZones((prev) =>
+      prev.includes(zoneName) ? prev.filter((z) => z !== zoneName) : [...prev, zoneName]
+    );
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-6 py-8 font-sans text-gray-900">
       {/* Header */}
@@ -85,14 +139,13 @@ export default function App() {
           Scottish Housing Sales & Price Dynamics (2004–2023)
         </h1>
         <p className="text-gray-600 text-lg max-w-3xl">
-          An interactive force-directed exploration of Scottish housing volume and values, modeled after the New York Times budget proposal visualisations.
+          An interactive exploration of Scottish housing volume and values, tracking individual intermediate zones against regional and national benchmarks.
         </p>
       </header>
 
       {/* Control Bar */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div className="flex flex-wrap items-center gap-3">
-          {/* Data Hierarchy Switch */}
           <div className="inline-flex rounded-lg border bg-slate-100 p-1 shadow-inner text-xs font-semibold uppercase tracking-wider">
             <button
               onClick={() => setGeoLevel('zone')}
@@ -112,7 +165,6 @@ export default function App() {
             </button>
           </div>
 
-          {/* Layout Modes */}
           <div className="inline-flex rounded-lg border bg-white p-1 shadow-sm text-sm font-medium">
             <button
               onClick={() => setViewMode('all')}
@@ -132,32 +184,21 @@ export default function App() {
             </button>
           </div>
 
-          {/* HSCP Dropdown Filter */}
-          {geoLevel === 'zone' && (
-            <div className="flex items-center gap-1.5">
-              <span className="text-xs font-bold text-gray-500 uppercase">HSCP:</span>
-              <select
-                value={selectedHSCP}
-                onChange={(e) => setSelectedHSCP(e.target.value)}
-                className="bg-white border border-gray-300 text-gray-800 text-xs font-semibold rounded-lg px-2.5 py-1.5 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 max-w-[210px]"
-              >
-                <option value="ALL">All Scotland ({hscpList.length} Areas)</option>
-                {hscpList.map((hscp) => (
-                  <option key={hscp} value={hscp}>
-                    {hscp}
-                  </option>
-                ))}
-              </select>
-              {selectedHSCP !== 'ALL' && (
-                <button
-                  onClick={() => setSelectedHSCP('ALL')}
-                  className="text-xs text-blue-600 hover:text-blue-800 font-semibold underline ml-1"
-                >
-                  Clear
-                </button>
-              )}
-            </div>
-          )}
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs font-bold text-gray-500 uppercase">HSCP Region:</span>
+            <select
+              value={selectedHSCP}
+              onChange={(e) => setSelectedHSCP(e.target.value)}
+              className="bg-white border border-gray-300 text-gray-800 text-xs font-semibold rounded-lg px-2.5 py-1.5 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 max-w-[210px]"
+            >
+              <option value="ALL">All Scotland (Default)</option>
+              {hscpList.map((hscp) => (
+                <option key={hscp} value={hscp}>
+                  {hscp}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* Year Slider */}
@@ -176,7 +217,7 @@ export default function App() {
       </div>
 
       {/* Main Canvas Card & Hover Card */}
-      <div className="relative">
+      <div className="relative mb-8">
         <BubbleChart
           data={activeDataset}
           selectedYear={selectedYear}
@@ -226,8 +267,16 @@ export default function App() {
           </div>
         )}
       </div>
-      <div className="relative">
-        <LineChartDatasetTransition width={800} height={300} 
+
+      {/* Comprehensive Multi-Line Chart Section with Selector List */}
+      <div className="grid grid-cols-1 gap-6">
+        <MultiLineChart
+          width={1100}
+          height={400}
+          data={lineChartData}
+          selectedZones={selectedZones}
+          onToggleZone={handleToggleZone}
+          onClearZones={() => setSelectedZones([])}
         />
       </div>
     </div>
