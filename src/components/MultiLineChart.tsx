@@ -127,73 +127,91 @@ export const MultiLineChart = ({
 
   return (
     <div className="bg-white p-5 rounded-xl border shadow-sm">
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
         <div>
           <h3 className="font-serif font-bold text-lg text-gray-800">
             Intermediate Zones & Averages: {regionName}
           </h3>
           <p className="text-xs text-gray-500">
-            Click lines on the chart or use the selector list below to compare specific zones.
+            Click lines on the chart or use the selector list to compare specific zones.
           </p>
         </div>
 
-        {/* Dropdown Selector Button Trigger */}
-        <div className="relative">
-          <button
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg border flex items-center gap-2 transition"
-          >
-            <span>Select Zones ({selectedZones.length}/{zones.length})</span>
-            <span className="text-slate-400">▼</span>
-          </button>
-
-          {/* Searchable Checkbox Menu */}
-          {isDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-72 bg-white border rounded-xl shadow-2xl p-3 z-30">
-              <div className="mb-2">
-                <input
-                  type="text"
-                  placeholder="Search zones..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full text-xs border rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div className="max-h-56 overflow-y-auto space-y-1 pr-1">
-                {filteredZones.map((zone) => {
-                  const isChecked = selectedZones.includes(zone);
-                  return (
-                    <label
-                      key={zone}
-                      className="flex items-center gap-2 text-xs text-gray-700 hover:bg-slate-50 p-1.5 rounded cursor-pointer"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={isChecked}
-                        onChange={() => onToggleZone(zone)}
-                        className="rounded text-blue-600 focus:ring-blue-500 w-3.5 h-3.5"
-                      />
-                      <span className="truncate">{zone}</span>
-                    </label>
-                  );
-                })}
-              </div>
-              <div className="border-t pt-2 mt-2 flex justify-between items-center text-xs">
-                <button
-                  onClick={onClearZones}
-                  className="text-rose-600 font-semibold hover:underline"
-                >
-                  Clear All
-                </button>
-                <button
-                  onClick={() => setIsDropdownOpen(false)}
-                  className="text-blue-600 font-semibold hover:underline"
-                >
-                  Done
-                </button>
-              </div>
+        {/* Legend & Selector Actions */}
+        <div className="flex flex-wrap items-center gap-5">
+          <div className="flex flex-wrap items-center gap-4 text-xs font-semibold bg-slate-50 px-3 py-1.5 rounded-lg border">
+            <div className="flex items-center gap-1.5">
+              <span className="w-3.5 h-1 bg-blue-600 rounded-full inline-block"></span>
+              <span className="text-gray-800">{regionName} Avg</span>
             </div>
-          )}
+            <div className="flex items-center gap-1.5">
+              <span className="w-3.5 h-0.5 bg-slate-700 border-dashed inline-block"></span>
+              <span className="text-gray-600">Scotland Avg</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-3.5 h-0.5 bg-slate-300 inline-block"></span>
+              <span className="text-gray-400">Other Zones</span>
+            </div>
+          </div>
+
+          {/* Dropdown Selector Button Trigger */}
+          <div className="relative">
+            <button
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg border flex items-center gap-2 transition"
+            >
+              <span>Select Zones ({selectedZones.length}/{zones.length})</span>
+              <span className="text-slate-400">▼</span>
+            </button>
+
+            {/* Searchable Checkbox Menu */}
+            {isDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-72 bg-white border rounded-xl shadow-2xl p-3 z-30">
+                <div className="mb-2">
+                  <input
+                    type="text"
+                    placeholder="Search zones..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full text-xs border rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div className="max-h-56 overflow-y-auto space-y-1 pr-1">
+                  {filteredZones.map((zone) => {
+                    const isChecked = selectedZones.includes(zone);
+                    return (
+                      <label
+                        key={zone}
+                        className="flex items-center gap-2 text-xs text-gray-700 hover:bg-slate-50 p-1.5 rounded cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => onToggleZone(zone)}
+                          className="rounded text-blue-600 focus:ring-blue-500 w-3.5 h-3.5"
+                        />
+                        <span className="truncate">{zone}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+                <div className="border-t pt-2 mt-2 flex justify-between items-center text-xs">
+                  <button
+                    onClick={onClearZones}
+                    className="text-rose-600 font-semibold hover:underline"
+                  >
+                    Clear All
+                  </button>
+                  <button
+                    onClick={() => setIsDropdownOpen(false)}
+                    className="text-blue-600 font-semibold hover:underline"
+                  >
+                    Done
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

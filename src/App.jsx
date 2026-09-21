@@ -7,7 +7,7 @@ export default function App() {
   const [selectedYear, setSelectedYear] = useState(2023);
   const [viewMode, setViewMode] = useState('all'); // 'all' | 'scatter'
   const [geoLevel, setGeoLevel] = useState('zone'); // 'zone' | 'hscp'
-  const [selectedHSCP, setSelectedHSCP] = useState('Aberdeen City');
+  const [selectedHSCP, setSelectedHSCP] = useState('Edinburgh');
   const [selectedZones, setSelectedZones] = useState([]);
   const [hoveredItem, setHoveredItem] = useState(null);
 
