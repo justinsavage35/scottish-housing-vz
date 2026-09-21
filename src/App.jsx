@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import BubbleChart from './components/BubbleChart';
+import { LineChart } from "./components/LineChart";
 
 export default function App() {
   const [data, setData] = useState([]);
@@ -226,12 +227,8 @@ export default function App() {
         )}
       </div>
       <div className="relative">
-        <BubbleChart
-          data={activeDataset}
-          selectedYear={selectedYear}
-          viewMode={viewMode}
-          geoLevel={geoLevel}
-          onHoverItem={setHoveredItem}
+        <LineChart
+        width={400} height={400}
         />
       </div>
     </div>
